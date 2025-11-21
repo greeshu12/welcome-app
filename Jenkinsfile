@@ -38,19 +38,31 @@ pipeline {
             }
         }
 
+        stage('Test Kubeconfig') {
+            steps {
+                withKubeConfig(credentialsId: 'rke2-kubeconfig') {
+                    sh "kubectl get nodes"
+                }
+            }
+        }
+
         stage('Deploy to RKE2 Kubernetes') {
             steps {
-                sh """
-                    kubectl apply -f k8s/deployment.yaml
-                    kubectl apply -f k8s/service.yaml
-                    kubectl rollout status deployment/welcome-app-deployment -n demo
-                """
+                withKubeConfig(credentialsId: 'rke2-kubeconfig') {
+                    sh """
+                        kubectl apply -f k8s/deployment.yaml -n demo
+                        kubectl apply -f k8s/service.yaml -n demo
+                        kubectl rollout status deployment/welcome-app-deployment -n demo
+                    """
+                }
             }
         }
 
         stage('Verify Pods') {
             steps {
-                sh "kubectl get pods -n demo"
+                withKubeConfig(credentialsId: 'rke2-kubeconfig') {
+                    sh "kubectl get pods -n demo"
+                }
             }
         }
 
