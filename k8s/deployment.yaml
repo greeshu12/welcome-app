@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
         - name: welcome-app
-          image: image: docker.io/greeshma258/jenkins:latest
+          image: docker.io/greeshma258/jenkins:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
+
